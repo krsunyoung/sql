@@ -1,0 +1,336 @@
+ALTER TABLE book
+	DROP
+		CONSTRAINT FK_category_TO_book
+		CASCADE;
+
+ALTER TABLE cart
+	DROP
+		CONSTRAINT FK_book_TO_cart
+		CASCADE;
+
+ALTER TABLE cart
+	DROP
+		CONSTRAINT FK_Customer_TO_cart
+		CASCADE;
+
+ALTER TABLE ordergo
+	DROP
+		CONSTRAINT FK_Customer_TO_ordergo
+		CASCADE;
+
+ALTER TABLE orderbook
+	DROP
+		CONSTRAINT FK_book_TO_orderbook
+		CASCADE;
+
+ALTER TABLE orderbook
+	DROP
+		CONSTRAINT FK_ordergo_TO_orderbook
+		CASCADE;
+
+ALTER TABLE category
+	DROP
+		PRIMARY KEY
+		CASCADE
+		KEEP INDEX;
+
+ALTER TABLE book
+	DROP
+		PRIMARY KEY
+		CASCADE
+		KEEP INDEX;
+
+ALTER TABLE Customer
+	DROP
+		PRIMARY KEY
+		CASCADE
+		KEEP INDEX;
+
+ALTER TABLE cart
+	DROP
+		PRIMARY KEY
+		CASCADE
+		KEEP INDEX;
+
+ALTER TABLE ordergo
+	DROP
+		PRIMARY KEY
+		CASCADE
+		KEEP INDEX;
+
+ALTER TABLE orderbook
+	DROP
+		PRIMARY KEY
+		CASCADE
+		KEEP INDEX;
+
+DROP INDEX PK_category;
+
+DROP INDEX PK_book;
+
+DROP INDEX PK_Customer;
+
+DROP INDEX PK_cart;
+
+DROP INDEX PK_ordergo;
+
+DROP INDEX PK_orderbook;
+
+/* 카테고리 */
+DROP TABLE category 
+	CASCADE CONSTRAINTS;
+
+/* 책 */
+DROP TABLE book 
+	CASCADE CONSTRAINTS;
+
+/* 고객 */
+DROP TABLE Customer 
+	CASCADE CONSTRAINTS;
+
+/* 카트 */
+DROP TABLE cart 
+	CASCADE CONSTRAINTS;
+
+/* 주문 */
+DROP TABLE ordergo 
+	CASCADE CONSTRAINTS;
+
+/* 주문도서 */
+DROP TABLE orderbook 
+	CASCADE CONSTRAINTS;
+
+/* 카테고리 */
+CREATE TABLE category (
+	no NUMBER(10) NOT NULL, /* 번호 */
+	name VARCHAR2(200) NOT NULL /* 이름 */
+);
+
+COMMENT ON TABLE category IS '카테고리';
+
+COMMENT ON COLUMN category.no IS '번호';
+
+COMMENT ON COLUMN category.name IS '이름';
+
+CREATE UNIQUE INDEX PK_category
+	ON category (
+		no ASC
+	);
+
+ALTER TABLE category
+	ADD
+		CONSTRAINT PK_category
+		PRIMARY KEY (
+			no
+		);
+
+/* 책 */
+CREATE TABLE book (
+	no NUMBER(10) NOT NULL, /* 번호 */
+	cate_no NUMBER(10) NOT NULL, /* 카테번호 */
+	title VARCHAR2(200) NOT NULL, /* 제목 */
+	price NUMBER(8) NOT NULL /* 가격 */
+);
+
+COMMENT ON TABLE book IS '책';
+
+COMMENT ON COLUMN book.no IS '번호';
+
+COMMENT ON COLUMN book.cate_no IS '카테번호';
+
+COMMENT ON COLUMN book.title IS '제목';
+
+COMMENT ON COLUMN book.price IS '가격';
+
+CREATE UNIQUE INDEX PK_book
+	ON book (
+		no ASC
+	);
+
+ALTER TABLE book
+	ADD
+		CONSTRAINT PK_book
+		PRIMARY KEY (
+			no
+		);
+
+/* 고객 */
+CREATE TABLE Customer (
+	no NUMBER(10) NOT NULL, /* 번호 */
+	name VARCHAR2(50) NOT NULL, /* 이름 */
+	tel VARCHAR2(15), /* 전화번호 */
+	email VARCHAR2(50), /* 이메일 */
+	pw VARCHAR2(50) NOT NULL /* 비밀번호 */
+);
+
+COMMENT ON TABLE Customer IS '고객';
+
+COMMENT ON COLUMN Customer.no IS '번호';
+
+COMMENT ON COLUMN Customer.name IS '이름';
+
+COMMENT ON COLUMN Customer.tel IS '전화번호';
+
+COMMENT ON COLUMN Customer.email IS '이메일';
+
+COMMENT ON COLUMN Customer.pw IS '비밀번호';
+
+CREATE UNIQUE INDEX PK_Customer
+	ON Customer (
+		no ASC
+	);
+
+ALTER TABLE Customer
+	ADD
+		CONSTRAINT PK_Customer
+		PRIMARY KEY (
+			no
+		);
+
+/* 카트 */
+CREATE TABLE cart (
+	no NUMBER(10) NOT NULL, /* 책번호 */
+	no2 NUMBER(10) NOT NULL, /* 고객번호 */
+	count NUMBER(10) /* 수량 */
+);
+
+COMMENT ON TABLE cart IS '카트';
+
+COMMENT ON COLUMN cart.no IS '책번호';
+
+COMMENT ON COLUMN cart.no2 IS '고객번호';
+
+COMMENT ON COLUMN cart.count IS '수량';
+
+CREATE UNIQUE INDEX PK_cart
+	ON cart (
+		no ASC,
+		no2 ASC
+	);
+
+ALTER TABLE cart
+	ADD
+		CONSTRAINT PK_cart
+		PRIMARY KEY (
+			no,
+			no2
+		);
+
+/* 주문 */
+CREATE TABLE ordergo (
+	no NUMBER(10) NOT NULL, /* 번호 */
+	price NUMBER(10) NOT NULL, /* 결제금액 */
+	address VARCHAR2(200) NOT NULL, /* 주소 */
+	cus_no NUMBER(10) NOT NULL /* 고객번호 */
+);
+
+COMMENT ON TABLE ordergo IS '주문';
+
+COMMENT ON COLUMN ordergo.no IS '번호';
+
+COMMENT ON COLUMN ordergo.price IS '결제금액';
+
+COMMENT ON COLUMN ordergo.address IS '주소';
+
+COMMENT ON COLUMN ordergo.cus_no IS '고객번호';
+
+CREATE UNIQUE INDEX PK_ordergo
+	ON ordergo (
+		no ASC
+	);
+
+ALTER TABLE ordergo
+	ADD
+		CONSTRAINT PK_ordergo
+		PRIMARY KEY (
+			no
+		);
+
+/* 주문도서 */
+CREATE TABLE orderbook (
+	order_no NUMBER(10) NOT NULL, /* 주문번호 */
+	book_no NUMBER(10) NOT NULL, /* 책번호 */
+	count NUMBER(10) NOT NULL /* 수량 */
+);
+
+COMMENT ON TABLE orderbook IS '주문도서';
+
+COMMENT ON COLUMN orderbook.order_no IS '주문번호';
+
+COMMENT ON COLUMN orderbook.book_no IS '책번호';
+
+COMMENT ON COLUMN orderbook.count IS '수량';
+
+CREATE UNIQUE INDEX PK_orderbook
+	ON orderbook (
+		order_no ASC,
+		book_no ASC
+	);
+
+ALTER TABLE orderbook
+	ADD
+		CONSTRAINT PK_orderbook
+		PRIMARY KEY (
+			order_no,
+			book_no
+		);
+
+ALTER TABLE book
+	ADD
+		CONSTRAINT FK_category_TO_book
+		FOREIGN KEY (
+			cate_no
+		)
+		REFERENCES category (
+			no
+		);
+
+ALTER TABLE cart
+	ADD
+		CONSTRAINT FK_book_TO_cart
+		FOREIGN KEY (
+			no
+		)
+		REFERENCES book (
+			no
+		);
+
+ALTER TABLE cart
+	ADD
+		CONSTRAINT FK_Customer_TO_cart
+		FOREIGN KEY (
+			no2
+		)
+		REFERENCES Customer (
+			no
+		);
+
+ALTER TABLE ordergo
+	ADD
+		CONSTRAINT FK_Customer_TO_ordergo
+		FOREIGN KEY (
+			cus_no
+		)
+		REFERENCES Customer (
+			no
+		);
+
+ALTER TABLE orderbook
+	ADD
+		CONSTRAINT FK_book_TO_orderbook
+		FOREIGN KEY (
+			book_no
+		)
+		REFERENCES book (
+			no
+		);
+
+ALTER TABLE orderbook
+	ADD
+		CONSTRAINT FK_ordergo_TO_orderbook
+		FOREIGN KEY (
+			order_no
+		)
+		REFERENCES ordergo (
+			no
+		);
